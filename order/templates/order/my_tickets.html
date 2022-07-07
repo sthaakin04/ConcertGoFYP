@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" rel="stylesheet">
+
+
+<link rel="stylesheet" href="{% static 'css/my.css' %}">
+<link rel="stylesheet" href="{% static 'css/profilevisit.css' %}">
+<link rel="stylesheet" href="{% static 'css/ticket.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Cabin|Indie+Flower|Inknut+Antiqua|Lora|Ravi+Prakash" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"  />
+
+{% include 'navbar.html' %}
+
+
+
+
+<div class="container">
+  <div class="row">
+  <div align="center">
+    <a href = "{% url 'ticket' %}">
+      <button class="filter-button">Tickets</button>
+    </a>
+    <a href = "{% url 'ticketWishlist' %}">
+      <button class="filter-button">Ticket wishlist</button>
+    </a>
+    <!-- <a href = "{% url 'myTickets' %}">
+        <button class="filter-button">My Tickets</button>
+      </a> -->
+  </div>
+  
+  <br/>
+  
+  
+
+
+  <div class="container">
+    {% for ticket in tickets %}
+    <div class="item">
+      <div class="item-right">
+        <h2 class="num">{{ticket.quantity}}</h2>
+        <p class="day">Tickets</p>
+        <span class="up-border"></span>
+        <span class="down-border"></span>
+      </div>
+      
+      <div class="item-left">
+        <p class="event">ConcertGo</p>
+        <a href="{% url 'ticketDetail' ticket.ticket.pk %}">
+          <h6 class="title">{{ticket.ticket.title}}</h6>
+        </a>
+        
+        
+        <div class="sce">
+          <div class="icon">
+            <i class="fa fa-table"></i>
+          </div>
+          <p>{{ticket.ticket.date}} <br/>
+            <a href="{% url 'profileVisit' ticket.ticket.seller.pk %}" data-abc="true">{{ticket.ticket.seller}}</a>
+          </p>
+        </div>
+        <div class="fix"></div>
+        <div class="loc">
+          <p>{{ticket.ticket.detail}}<br/></p>
+        </div>
+        <div class="fix"></div>
+        
+      </div>
+    </div>
+
+    
+{% endfor %}
+  </div>
+
+
+
+
+{% endblock %}

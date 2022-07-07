@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load humanize %}
+{% block content %}
+
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+
+{% include 'navbar.html' %}
+
+
+<div class="container">
+    <div class="row activity">
+        <div class="col-md-6">
+            <!-- left column -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <img src="{{ post.owner.image.url }}" class="user-profile">
+                    {% if post.owner == request.user.profile %}
+                    <div class="pull-right text-right">
+                        <button type="button" class="btn btn-light"><span class="bi bi-three-dots-vertical"></span></button>
+                        <div class="menu-nav">
+                            <div class="dropdown-container" tabindex="-1">
+                              <div class="three-dots"></div>
+                              <div class="dropdown">
+                                <a href="{% url 'postUpdate' post.pk %}"><div>Edit</div></a>
+                                <a href="{% url 'postDelete' post.pk %}"><div>Delete</div></a>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    
+                    <a href="{% url 'profileVisit' post.owner.pk %}">
+                        <div><strong>{{ post.owner }}</strong></div>
+                    </a>
+                    <div class="small">{{ post.date_posted }}</div>
+                </div>
+                <div class="panel-body">
+                    <p>{{ post.detail }}</p>
+                    <div class="video-container" style="height:-10">
+                        <image src="{{ post.image.url }}" width="524" frameborder="0"></image>
+                    </div>
+                    
+                    <div class="actions">
+                        <div class="btn-group" style="display: flex;justify-content: space-around;">
+                            <form action = "{% url 'likeUnlikePost' %}" method="POST" class='like-form' id="{{post.id}}">
+                                {% csrf_token %}
+                                <input type="hidden" name="post_id" value="{{post.id}}">
+                                <button type="submit" class="btn btn-link like-btn{{post.id}}">
+                                    {% if request.user.profile not in post.likes.all %}
+                                    Like
+                                    {% else %}
+                                    Unlike
+                                    {% endif %}
+                                </button>
+                            </form>
+                            <a href="{% url 'postDetail' post.pk %}">
+                                <button type="button" class="btn btn-link">
+                                     Comment</button>
+                            </a>
+                            <div class="pull-right" style="display: flex;"><strong style="margin-right: 5px;"><div class="like-count{{post.id}}"> {{post.likes.count }} </div></strong>  Likes</div>
+                        </div>
+                    </div>  
+                    
+                </div>
+            </div>        
+        </div>
+        <div class="col-md-6">
+            <!-- right column -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a href="{{request.META.HTTP_REFERER}}" class="previous round"><div class="prev">&#8249;</div></a>
+                    <div><strong>Comments</strong></div>  
+                </div>
+                <div class="panel-body">
+                    {% if not post.comments.all %}
+                    <p> No comments yet</p>
+                    {% else %}
+                        {% for comment in post.comments.all %}
+                            <div class="media">
+                                <div class="media-body">
+                                    <div class="pull-right small">{{ comment.date_added|naturaltime }}
+                                        {% if comment.user == request.user.profile %}
+                                        <br>
+                                        <div class="pull-right small">
+                                            <a href="{% url 'comment_delete' comment.id %}"><p>delete</p></a> 
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <h5 class="media-heading"><a href="{% url 'profileVisit' comment.user.pk %}">@{{ comment.user }}</a></h5>
+                                    <p>{{ comment.body}}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <hr size="8" width="98%" color="gray">
+                    {% endif %}
+                    <div class="add-comment-section">
+                        <form method="POST" class="d-flex justify-content-between" autocomplete="off">
+                            {% csrf_token %}
+                            {{ form }}
+                            <button class="btn btn-primary" type="submit">Comment</button>
+                        </form>
+                    </div>
+
+            </div>
+
+        </div><!--/.col-->
+        
+    </div>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% include 'navbar.html' %}
+{% load crispy_forms_tags %}
+
+<link rel="stylesheet" href="{% static 'css/order.css' %}">
+
+<div class="container mt-5 p-3 rounded cart">
+    <div class="row no-gutters">
+        <div class="col-md-8">
+            <form action="/payment" id="paymentform">
+                {% for ticket in tickets %}
+                <div class="product-details mr-2">
+                    <article class="postcard dark red">
+                        <a class="postcard__img_link" href="#">
+                            <img class="postcard__img" src="{{ticket.image.url}}" alt="Image Title" />	
+                        </a>
+                        <div class="postcard__text">
+                            <h1 class="postcard__title red"><a href="#">{{ticket.title}}</a></h1>
+                            <div class="postcard__subtitle small">
+                                <time datetime="2020-05-25 12:00:00">
+                                    {{ticket.date}}
+                                </time>
+                            </div>
+                            <div class="postcard__bar"></div>
+                            <div class="postcard__preview-txt">{{ticket.detail}}</div>
+                            <ul class="postcard__tagbox">
+                                <li class="tag__item">{{ticket.quantity}} tickets left</li>
+                                <li class="tag__item play red">
+                                    $<span id=ticketprice>{{ticket.price}}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </article>
+                </div>
+                <input  type="hidden" name="ticketid" value="{{ticket.pk}}">
+            {% endfor %}
+        </div>
+        <div class="col-md-4">
+            <div class="payment-info">
+                <div class="d-flex justify-content-between align-items-center"><span>Payment details</span></div>
+                <div class="row">
+                </div>
+                <hr class="line">
+                    <input  type="hidden" name="tquan" value="{{quantity}}">
+                    {% for tickes in tickets %}
+                    <div class="d-flex justify-content-between information">
+                        <span><h2>Total</h2></span><span id="subtotal"><h2>${{tot}}</h2></span>
+                    </div>
+                    {% endfor %}
+                <div id="paypal-button-container"></div>
+            </div>
+        </form>
+        </div>
+    
+    </div>
+    
+</div>
+{% endblock content %}
+{% block payment-gateway %}
+
+<script src="https://www.paypal.com/sdk/js?client-id=ATif2iPBVWE3YUaj3RQ3rOA_gsS979fKo88oXgf0OfVeU56L1jN9bkbV19MRM2_eOurC5tPQyw-ZbQ99&currency=USD"></script>
+<script>
+    // Render the PayPal button into #paypal-button-container
+    paypal.Buttons({
+        // Set up the transaction
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: '{{tot}}'
+                    }
+                }]
+            });
+        },
+
+        // Finalize the transaction
+        onApprove: function(data, actions) {
+            return actions.order.capture().then(function(orderData) {
+                // Successful capture! For demo purposes:
+                console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                var transaction = orderData.purchase_units[0].payments.captures[0];
+                alert('Transaction '+ transaction.status + ': ' + transaction.id + '\n\nSee console for all available details');
+                document.getElementById("paymentform").submit();
+                // Replace the above to show a success message within this page, e.g.
+                // const element = document.getElementById('paypal-button-container');
+                // element.innerHTML = '';
+                // element.innerHTML = '<h3>Thank you for your payment!</h3>';
+                // Or go to another URL:  actions.redirect('thank_you.html');
+            });
+        }
+
+
+    }).render('#paypal-button-container');
+</script>
+{% endblock payment-gateway %}

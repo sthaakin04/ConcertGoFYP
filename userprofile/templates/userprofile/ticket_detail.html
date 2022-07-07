@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/ticket.css' %}">
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+
+{% include 'navbar.html' %}
+<div class="container">
+    <div class="product-content product-wrap clearfix product-deatil">
+        <div class="row">
+            <div class="col-md-5 col-sm-12 col-xs-12">
+                <div class="product-image">
+                    <div id="myCarousel-2" class="carousel slide">
+                        <div class="carousel-inner">
+                            <div class="item active">
+                                <img src="{{ticket.image.url}}" class="img-responsive" alt="" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-md-offset-1 col-sm-12 col-xs-12">
+                <div class="pull-right text-right">
+                    {% if ticket.seller == request.user.profile%}
+                    <button type="button" class="btn btn-light">
+                        <span class="bi bi-three-dots-vertical">
+                        </span>
+                    </button>
+                    <div class="menu-nav">
+                        <div class="dropdown-container" tabindex="-1">
+                          <div class="three-dots"></div>
+                          <div class="dropdown">
+                            <a href="{% url 'ticketUpdate' ticket.pk %}"><div>Edit</div></a>
+                            <a href="{% url 'ticketDelete' ticket.pk %}"><div>Delete</div></a>
+                          </div>
+                        </div>
+                    </div>
+                    
+                    {% endif %}
+                </div>
+                <h2 class="name">
+                    {{ticket.title}}
+                    <p>
+                        {{ticket.date}}
+                    </p>
+                    <small>Tickets from <a href="{% url 'profileVisit' ticket.seller.pk %}">{{ticket.seller}}</a></small>
+                    <br>
+                    <span class="fa fa-2x"><h4>Buy tickets before {{ticket.ex_date}}</h4></span>
+                    <span class="fa fa-2x"><h4>|| {{ticket.quantity}} tickets left</h4></span>
+                </h2>
+                <hr />
+                <div class="description description-tabs">
+                    <div id="myTabContent" class="tab-content">
+                        <div class="tab-pane fade active in" id="more-information">
+                            <br />
+                            <strong>Description</strong>
+                            <p>
+                                {{ticket.detail}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <hr/>
+                <h3 class="price-container">
+                    ${{ticket.price}}
+                </h3>
+                {% if ticket.seller != request.user.profile%}
+                <div class="certified">
+                    <form action="{% url 'orderTicket' ticket.pk %}">
+                        <span class = "dec qtybtn decrement-btn" style="cursor:pointer">-</span>
+                        <input type="text" name="quantity" class="qty-input" value="1" id="quantity">
+                        <span class="dec qtybtn increment-btn" pid="{{product.quantity}}" style="cursor:pointer">+</span>
+                        <br>
+                        <button type="submit" class="btn btn-success btn-lg" style="margin-top: -28px;">Purchase ticket</button>
+                    </form>
+                    <div class="btn-group pull-right">
+                        <div>
+                            <button class="btn btn-white btn-default add-wishlist" data-ticket="{{ticket.pk}}"><i class="fa fa-star"></i> Add to wishlist</button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-6">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        
+{% endblock content %}

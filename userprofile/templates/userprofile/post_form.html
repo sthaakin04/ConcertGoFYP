@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% include 'navbar.html' %}
+{% load crispy_forms_tags %}
+
+
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-7 mx-auto">
+      <div class="bg-white rounded-lg shadow-sm p-5">
+        <h1>Post</h1>
+
+        <div class="tab-content">
+          <div id="nav-tab-card" >
+            <form method = "POST" action = "" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form|crispy}}
+            </div> <button class="btn btn-primary btn-block confirm-button">Confirm</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
